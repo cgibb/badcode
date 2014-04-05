@@ -4,6 +4,8 @@ driver, just call Michael's parser from within here
 '''
 
 import sys, pygame
+from PIL import Image
+from pygame.locals import *
 import pygraphviz as pgv
 
 def main(argv=None):
@@ -81,7 +83,26 @@ class Frame():
 	def __init__(self, graph):
 		pygame.init()
 		self.graph = graph
-		
+		self.bg = pygame.image.load(graph.file)	
+
+		width, height = getPNGSize(self.graph.file)
+
+		self.bg = pygame.transform.scale(self.bg, (2*width, 2*height))
+	
+		bgRect = self.bg.get_rect()
+		self.size = width, height = bgRect.width, bgRect.height
+		self.screen = pygame.display.set_mode(self.size)
+		self.screen.blit(self.bg, bgRect)
+
+		pygame.display.update()	
+
+		while True:
+			pass
+
+def getPNGSize(img):
+	im = Image.open(img)
+	size = im.size
+	return size[0], size[1]
 
 if __name__ == "__main__":
 	sys.exit(main())
