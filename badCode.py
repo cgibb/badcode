@@ -20,27 +20,52 @@ def main(argv=None):
 	# and then create the the data structure we want...
 
 	# a simple array should do just fine since order may not matter
-	data = None
+	data = [Node('hi', 10, 100), Node('hey', 5, 10)]
+	data[0].children.append(data[1])
 	maxCalls = 10
 	maxSteps = 100
 
-	graph = Graph(maxCalls, maxSteps)
-	graph.make(data)
-
+	graph = Graph(maxCalls, maxSteps, data)
 	frame = Frame(graph)
 
 class Graph():
-	def __init__(self, maxCalls, maxSteps):
-		self.graph = pgv.AGraph(directed=True))
+	def __init__(self, maxCalls, maxSteps, data):
+		self.graph = pgv.AGraph(directed=True)
 		self.maxCalls = maxCalls
 		self.maxSteps = maxSteps
-	
+		self.maxSize = 100
+
+		self.processed = []
+
+		self.file = '.tmpfileforbadCODEEDEDE.png'
+
+		self.make(data)
+
 		self.graph.layout()
+		self.graph.draw(self.file, 'png')
 
 	# data better be an array of nodes
 	def make(self, data):
 		if data is None:
 			raise Exception('fuck you data is None')
+		for node in data:
+			self.createNode(node)
+
+	# recursively call so that we can make directed edges
+	def createNode(self, node):
+		if node.name in self.processed:
+			pass
+		
+		self.processed.append(node.name)
+		
+		size = self.maxSize * (node.calls // self.maxCalls)
+		color = 255 * (node.steps // self.maxSteps)
+
+		self.graph.add_node(node.name)
+
+		for child in node.children:
+			self.createNode(child)
+			self.graph.add_edge(node.name, child.name)
 
 # node in our graph is just a function call and its stats
 # we also track who a node calls, but we do not care about its parent
@@ -50,16 +75,12 @@ class Node():
 		self.calls = calls
 		self.steps = steps
 		self.children = []
-		self.parents = []
 
 # actual pygame frame, for now let's just have it wrapped in a class
 class Frame():
 	def __init__(self, graph):
 		pygame.init()
-		self.graph
-		self.file = '.tmpfileforbadCODEEDEDE.png'
-
-		self.graph.draw(self.file, 'png')
+		self.graph = graph
 		
 
 if __name__ == "__main__":
