@@ -45,8 +45,11 @@ class NXGraph():
 		self.maxCalls = maxCalls
 		self.maxSteps = maxSteps
 		self.processed = []
+		self.nameToSize = {}
+		self.nameToFreq = {}
 		
 		self.make(data)
+		d = nx.degree(self.graph)
 		nx.draw(self.graph)
 		plt.show()
 	
@@ -62,11 +65,14 @@ class NXGraph():
 		if node.name in self.processed:
 			return
 		self.processed.append(node.name)
-		self.graph.add_node(node.name)
+		self.nameToSize.update({node.name: node.calls})
+		self.nameToFreq.update({node.name: node.steps}) 
+
+		self.graph.add_node(node.name, style='filled', fillColor='red', shape='square')
 		
 		for child in node.children:
 			self.createNode(child)
-			self.graph.add_edge(node.name, child.name)
+			self.graph.add_edge(node.name, child.name, color='blue')
 
 class PGVGraph():
 	def __init__(self, maxCalls, maxSteps, data):
