@@ -2,14 +2,16 @@
 '''
 driver, just call Michael's parser from within here
 '''
-
-import sys, pygame
+import sys
+import pygame
 from PIL import Image
 from pygame.locals import *
 import pygraphviz as pgv
 import networkx as nx
+import matplotlib.pyplot as plt
 
 def main(argv=None):
+
 	if argv is None:
 		sys.argv
 	
@@ -30,13 +32,41 @@ def main(argv=None):
 	maxCalls = 10
 	maxSteps = 100
 
+	graph = NXGraph(maxCalls, maxSteps, data)
+
+	while True:
+		pass
 	# previously with pygraphviz and pygame
 	# graph = PGVGraph(maxCalls, maxSteps, data)
 	# frame = PGVFrame(graph)
 class NXGraph():
-	def __init__(self):
-		pass
+	def __init__(self, maxCalls, maxSteps, data):
+		self.graph = nx.DiGraph()
+		self.maxCalls = maxCalls
+		self.maxSteps = maxSteps
+		self.processed = []
+		
+		self.make(data)
+		nx.draw(self.graph)
+		plt.show()
+	
+	def make(self, data):
+		if data is None:
+			raise Exception('fuck you data is None')
+		for node in data:
+			self.createNode(node)
 
+	def createNode(self, node):
+		if node is None:
+			raise Exception('fuck you node is none')
+		if node.name in self.processed:
+			return
+		self.processed.append(node.name)
+		self.graph.add_node(node.name)
+		
+		for child in node.children:
+			self.createNode(child)
+			self.graph.add_edge(node.name, child.name)
 
 class PGVGraph():
 	def __init__(self, maxCalls, maxSteps, data):
