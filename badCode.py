@@ -7,6 +7,7 @@ import sys, pygame
 from PIL import Image
 from pygame.locals import *
 import pygraphviz as pgv
+import networkx as nx
 
 def main(argv=None):
 	if argv is None:
@@ -29,10 +30,15 @@ def main(argv=None):
 	maxCalls = 10
 	maxSteps = 100
 
-	graph = Graph(maxCalls, maxSteps, data)
-	frame = Frame(graph)
+	# previously with pygraphviz and pygame
+	# graph = PGVGraph(maxCalls, maxSteps, data)
+	# frame = PGVFrame(graph)
+class NXGraph():
+	def __init__(self):
+		pass
 
-class Graph():
+
+class PGVGraph():
 	def __init__(self, maxCalls, maxSteps, data):
 		self.graph = pgv.AGraph(strict=False, directed=True)
 		self.graph.node_attr['style'] = 'filled'
@@ -85,7 +91,7 @@ class Node():
 		self.children = []
 
 # actual pygame frame, for now let's just have it wrapped in a class
-class Frame():
+class PGVFrame():
 	def __init__(self, graph):
 		pygame.init()
 		self.graph = graph
